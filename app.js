@@ -7,9 +7,40 @@
  let selected=0,lastFocus=null;
  const intro=$('#intro');
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
- function dismiss(){intro.classList.add('dismissed');intro.inert=true;try{sessionStorage.setItem('jemina-intro-v5','seen')}catch{}}
- $('#skip-intro').onclick=dismiss;
- try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v5'))dismiss();else setTimeout(dismiss,4600)}catch{setTimeout(dismiss,reducedMotion?0:4600)}
+ let introFinished=false;
+ function dismiss(ripple=false){
+  if(introFinished)return;introFinished=true;intro.inert=true;
+  try{sessionStorage.setItem('jemina-intro-v6','seen')}catch{}
+  if(!ripple||reducedMotion){intro.classList.add('dismissed');return}
+  const ring=document.createElement('div');ring.className='intro-ripple-ring';document.body.append(ring);
+  const duration=1000,started=performance.now(),radius=Math.hypot(innerWidth,innerHeight)/2+80;
+  function reveal(now){
+   const progress=Math.min((now-started)/duration,1),ease=1-Math.pow(1-progress,3),r=radius*ease;
+   const mask='radial-gradient(circle at 50% 50%, transparent '+r+'px, black '+(r+28)+'px)';
+   intro.style.maskImage=mask;intro.style.webkitMaskImage=mask;
+   ring.style.width=ring.style.height=(r*2)+'px';ring.style.opacity=String((1-progress)*.3);
+   if(progress<1)requestAnimationFrame(reveal);else{intro.classList.add('dismissed');ring.remove()}
+  }
+  requestAnimationFrame(reveal);
+ }
+ $('#skip-intro').onclick=()=>dismiss();
+ try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v6'))dismiss();else setTimeout(()=>dismiss(true),4600)}catch{setTimeout(()=>dismiss(!reducedMotion),reducedMotion?0:4600)}
+ // Small, short-lived stars; no touch trail and no blocked clicks.
+ const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+ if(matchMedia('(hover: hover) and (pointer: fine)').matches){
+  let lastSpark=0;const sparks=new Set();
+  addEventListener('pointermove',event=>{
+   if(event.pointerType==='touch'||motionPreference.matches||document.hidden)return;
+   const now=performance.now();if(now-lastSpark<45||sparks.size>=24)return;lastSpark=now;
+   const spark=document.createElement('span');spark.className='cursor-sparkle';spark.setAttribute('aria-hidden','true');
+   spark.style.left=event.clientX+'px';spark.style.top=event.clientY+'px';
+   spark.style.setProperty('--drift-x',(Math.random()*20-10)+'px');spark.style.setProperty('--drift-y',(10+Math.random()*18)+'px');
+   spark.style.setProperty('--spark-size',(3+Math.random()*4)+'px');
+   document.body.append(spark);sparks.add(spark);
+   setTimeout(()=>{spark.remove();sparks.delete(spark)},700);
+  },{passive:true});
+  motionPreference.addEventListener('change',()=>{if(motionPreference.matches){sparks.forEach(s=>s.remove());sparks.clear()}});
+ }
  const featured=projects.slice(0,5);
  featured.forEach((p,i)=>{
   const button=document.createElement('button');button.textContent=String(i+1).padStart(2,'0');button.setAttribute('aria-label',`Feature ${p.title}`);button.setAttribute('aria-pressed',i===0);
