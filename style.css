@@ -29,3 +29,9 @@
   100%{opacity:1;filter:blur(12px);transform:scale(1) translateX(0)}
 }
 @media(prefers-reduced-motion:reduce){.intro:before,.intro:after{animation:none;filter:none}}
+
+/* A circular ripple opens the intro onto the portfolio underneath. */
+.intro-ripple-ring{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #e9ddc0;border-radius:50%;box-shadow:0 0 24px #e9ddc033,inset 0 0 18px #e9ddc022;pointer-events:none;z-index:11}
+.cursor-sparkle{position:fixed;width:var(--spark-size);height:var(--spark-size);pointer-events:none;z-index:30;background:#e9ddc0;clip-path:polygon(50% 0,60% 39%,100% 50%,60% 61%,50% 100%,40% 61%,0 50%,40% 39%);animation:sparkleTrail .65s ease-out both}
+@keyframes sparkleTrail{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}15%{opacity:.8;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--drift-x)),calc(-50% + var(--drift-y))) scale(.1) rotate(60deg)}}
+@media(prefers-reduced-motion:reduce){.cursor-sparkle,.intro-ripple-ring{display:none}}
