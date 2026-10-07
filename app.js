@@ -6,9 +6,14 @@
  const dialog=$('#project-dialog');
  let selected=0,lastFocus=null;
  const intro=$('#intro');
- function dismiss(){intro.classList.add('dismissed');intro.inert=true;try{sessionStorage.setItem('jemina-intro','seen')}catch{}}
+ const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ projects.slice(0,8).forEach((p,i)=>{
+  const still=document.createElement('img');still.src=image(p,p.cover);still.alt='';
+  still.style.setProperty('--frame',i);$('.intro-collage').append(still);
+ });
+ function dismiss(){intro.classList.add('dismissed');intro.inert=true;try{sessionStorage.setItem('jemina-intro-v2','seen')}catch{}}
  $('#skip-intro').onclick=dismiss;
- try{if(sessionStorage.getItem('jemina-intro'))dismiss();else setTimeout(dismiss,2200)}catch{setTimeout(dismiss,2200)}
+ try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v2'))dismiss();else setTimeout(dismiss,4800)}catch{setTimeout(dismiss,reducedMotion?0:4800)}
  const featured=projects.slice(0,5);
  featured.forEach((p,i)=>{
   const button=document.createElement('button');button.textContent=String(i+1).padStart(2,'0');button.setAttribute('aria-label',`Feature ${p.title}`);button.setAttribute('aria-pressed',i===0);
