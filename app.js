@@ -8,23 +8,13 @@
  const intro=$('#intro');
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let introFinished=false;
- function dismiss(ripple=false){
+ function dismiss(){
   if(introFinished)return;introFinished=true;intro.inert=true;
-  try{sessionStorage.setItem('jemina-intro-v6','seen')}catch{}
-  if(!ripple||reducedMotion){intro.classList.add('dismissed');return}
-  const ring=document.createElement('div');ring.className='intro-ripple-ring';document.body.append(ring);
-  const duration=1000,started=performance.now(),radius=Math.hypot(innerWidth,innerHeight)/2+80;
-  function reveal(now){
-   const progress=Math.min((now-started)/duration,1),ease=1-Math.pow(1-progress,3),r=radius*ease;
-   const mask='radial-gradient(circle at 50% 50%, transparent '+r+'px, black '+(r+28)+'px)';
-   intro.style.maskImage=mask;intro.style.webkitMaskImage=mask;
-   ring.style.width=ring.style.height=(r*2)+'px';ring.style.opacity=String((1-progress)*.3);
-   if(progress<1)requestAnimationFrame(reveal);else{intro.classList.add('dismissed');ring.remove()}
-  }
-  requestAnimationFrame(reveal);
+  intro.classList.add('dismissed');
+  try{sessionStorage.setItem('jemina-intro-v7','seen')}catch{}
  }
  $('#skip-intro').onclick=()=>dismiss();
- try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v6'))dismiss();else setTimeout(()=>dismiss(true),4600)}catch{setTimeout(()=>dismiss(!reducedMotion),reducedMotion?0:4600)}
+ try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v7'))dismiss();else setTimeout(()=>dismiss(),4600)}catch{setTimeout(()=>dismiss(),reducedMotion?0:4600)}
  // Small, short-lived stars; no touch trail and no blocked clicks.
  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
  if(matchMedia('(hover: hover) and (pointer: fine)').matches){
@@ -65,4 +55,21 @@
  $('#close-dialog').onclick=close;dialog.addEventListener('cancel',e=>{e.preventDefault();close()});dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close()}});
  $('#vp-open').onclick=()=>openProject('flash-forward');$('.vp-image').onclick=()=>openProject('flash-forward');
  function fromHash(){if(location.hash.startsWith('#project/')){dismiss();openProject(location.hash.slice(9))}}fromHash();addEventListener('hashchange',fromHash);
+
+ // Reveal once, then stop observing: previously seen content stays visible.
+ if(!motionPreference.matches && 'IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target)}
+   });
+  },{threshold:0,rootMargin:'0px 0px -35px 0px'});
+  const targets=document.querySelectorAll('.section-heading,.project-card,.filmstrip-head,.filmstrip,.current-grid article,.portrait,.about-copy,.approach>.eyebrow,.approach-item,.vp>div,.vp-image,footer');
+  targets.forEach(element=>{
+   if(element.getBoundingClientRect().top<innerHeight-35)return;
+   element.classList.add('scroll-reveal');observer.observe(element);
+  });
+  motionPreference.addEventListener('change',()=>{
+   if(motionPreference.matches){observer.disconnect();targets.forEach(element=>element.classList.add('is-revealed'))}
+  });
+ }
 })();
