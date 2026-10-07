@@ -5,3 +5,14 @@
 .approach-item{border-top:1px solid var(--line);padding:18px 0}
 .approach-item h3{font:clamp(38px,5vw,65px) var(--serif);display:flex;justify-content:space-between;align-items:center}
 .approach-item h3 span{font:12px Arial;color:var(--muted)}
+
+/* Cinematic focus pull: name sharpens, then the subtitle arrives. */
+.intro>span{animation:focusPull 1.65s cubic-bezier(.2,.65,.3,1) both;will-change:filter,opacity,transform}
+.intro>i{animation:introReveal .8s 1.25s both}
+.intro{transition:opacity .75s ease,visibility .75s}
+@keyframes focusPull{
+  0%{opacity:0;filter:blur(14px);transform:scale(1.035)}
+  25%{opacity:.75;filter:blur(9px)}
+  100%{opacity:1;filter:blur(0);transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.intro{display:none}.intro>span{animation:none;filter:none;will-change:auto}}
