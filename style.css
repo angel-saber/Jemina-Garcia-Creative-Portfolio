@@ -40,3 +40,23 @@
 .scroll-reveal{opacity:0;transition:opacity .8s ease}
 .scroll-reveal.is-revealed{opacity:1}
 @media(prefers-reduced-motion:reduce){.scroll-reveal{opacity:1;transition:none}}
+
+/* Persistent navigation, film previews, and accessible direct viewing controls. */
+header{position:sticky;top:0;z-index:5;background:#131413f5;backdrop-filter:blur(12px);height:86px}
+nav a{padding:10px 0;border-bottom:1px solid transparent}
+nav a[aria-current]{border-color:var(--paper)}
+.project-open{display:block;width:100%;padding:0;text-align:left}
+.image-wrap{position:relative}
+.image-wrap .preview-still{position:absolute;inset:0;opacity:0;transition:opacity .65s ease,transform .7s}
+@media(hover:hover) and (pointer:fine){.project-open:hover .preview-still{opacity:1}}
+.project-open:focus-visible .preview-still{opacity:1}
+.card-watch{margin-top:15px;font-size:13px}
+.card-watch a,.card-watch button{display:inline-flex;align-items:center;min-height:44px;padding:8px 0;border-bottom:1px solid var(--line)}
+.project-transition{position:fixed;z-index:4;object-fit:cover;pointer-events:none}
+.footer-bottom button{font-size:12px;padding:0}
+.watch-actions a,.watch-actions button,.filters button,.hero-controls button,.dialog-toolbar button,.detail-next button{min-height:44px}
+@media(max-width:760px){header{height:85px}html{scroll-padding-top:100px}.card-watch{margin-top:8px}.project-detail .watch-actions{gap:12px}.watch-actions a,.watch-actions button{width:100%;text-align:center;justify-content:center}.detail-cover{object-position:center}.project-detail h2{overflow-wrap:anywhere}.footer-bottom button,.footer-bottom a{min-height:44px;display:inline-flex;align-items:center}.preview-still{display:none}}
+@media(max-width:380px){html{scroll-padding-top:120px}}
+@media(prefers-reduced-motion:reduce){.preview-still,.project-transition{display:none}}
+
+@media(prefers-reduced-motion:reduce){#replay-intro{display:none}}
