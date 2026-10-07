@@ -16,3 +16,16 @@
   100%{opacity:1;filter:blur(0);transform:scale(1)}
 }
 @media(prefers-reduced-motion:reduce){.intro{display:none}.intro>span{animation:none;filter:none;will-change:auto}}
+
+/* Restrained projector light and fine film texture behind the title. */
+.intro{isolation:isolate;overflow:hidden}
+.intro:before{content:"";position:absolute;inset:-20%;z-index:-2;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,rgba(223,205,169,.15) 0%,rgba(184,164,129,.065) 23%,transparent 54%);animation:projectorFocus 4.6s ease-out both}
+.intro:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='.7'/%3E%3C/svg%3E");background-repeat:repeat}
+.intro>span,.intro>i,.intro>button{position:relative;z-index:1}
+.intro>button{position:absolute}
+@keyframes projectorFocus{
+  0%{opacity:0;filter:blur(55px);transform:scale(1.2) translateX(-2%)}
+  35%{opacity:.7;filter:blur(32px)}
+  100%{opacity:1;filter:blur(12px);transform:scale(1) translateX(0)}
+}
+@media(prefers-reduced-motion:reduce){.intro:before,.intro:after{animation:none;filter:none}}
