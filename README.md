@@ -25,7 +25,6 @@ All asset paths are relative, so the site supports both a root domain and a `/po
 
 ## Media and content notes
 
-- Self-Portrait and Oh Yea! are excluded, as requested. The accidental AngelSaber image is not used.
 - Stills are extracted from the supplied portfolio PDF. The Flash Forward gallery uses images from its virtual-production section; original scene attribution can be refined if needed.
 - Float is converted from the supplied MOV to H.264/AAC MP4. Audio begins only when the visitor presses play.
 - Public YouTube players load only after clicking Watch film, with direct fallback links. Private Drive films and the password-protected Vimeo film use email screening requests. No private screening URLs or passwords are published.
