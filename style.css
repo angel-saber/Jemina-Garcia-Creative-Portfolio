@@ -133,3 +133,5 @@ footer h2{line-height:1.12;color:var(--accent)}
 #cinema-list button{white-space:nowrap;padding:10px 16px;min-height:44px;border-bottom:1px solid var(--line);color:var(--muted)}
 #cinema-list button[aria-pressed=true]{color:var(--accent);border-color:var(--accent)}
 @media(max-width:760px){.cinema-controls{align-items:flex-start;flex-direction:column}.cinema-actions{width:100%}#cinema-open{margin-left:auto}.cinema-heading{align-items:start}}
+
+@media(max-width:760px){header nav{width:100%;justify-content:space-between;gap:8px}html{scroll-padding-top:135px}header nav a{white-space:nowrap;padding:6px 0}}
