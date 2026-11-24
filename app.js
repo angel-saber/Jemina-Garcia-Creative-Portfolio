@@ -9,28 +9,13 @@
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
  let introFinished=false,introTimer;
  function dismiss(){
-  if(introFinished)return;introFinished=true;intro.inert=true;
+  if(introFinished)return;introFinished=true;clearTimeout(introTimer);intro.inert=true;
   intro.classList.add('dismissed');
   try{sessionStorage.setItem('jemina-intro-v7','seen')}catch{}
  }
  $('#skip-intro').onclick=()=>dismiss();
- try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v7'))dismiss();else introTimer=setTimeout(()=>dismiss(),4600)}catch{introTimer=setTimeout(()=>dismiss(),reducedMotion?0:4600)}
- // Small, short-lived stars; no touch trail and no blocked clicks.
+ try{if(reducedMotion||sessionStorage.getItem('jemina-intro-v7'))dismiss();else introTimer=setTimeout(()=>dismiss(),2400)}catch{introTimer=setTimeout(()=>dismiss(),reducedMotion?0:2400)}
  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
- if(matchMedia('(hover: hover) and (pointer: fine)').matches){
-  let lastSpark=0;const sparks=new Set();
-  addEventListener('pointermove',event=>{
-   if(event.pointerType==='touch'||motionPreference.matches||document.hidden)return;
-   const now=performance.now();if(now-lastSpark<45||sparks.size>=24)return;lastSpark=now;
-   const spark=document.createElement('span');spark.className='cursor-sparkle';spark.setAttribute('aria-hidden','true');
-   spark.style.left=event.clientX+'px';spark.style.top=event.clientY+'px';
-   spark.style.setProperty('--drift-x',(Math.random()*20-10)+'px');spark.style.setProperty('--drift-y',(10+Math.random()*18)+'px');
-   spark.style.setProperty('--spark-size',(3+Math.random()*4)+'px');
-   document.body.append(spark);sparks.add(spark);
-   setTimeout(()=>{spark.remove();sparks.delete(spark)},700);
-  },{passive:true});
-  motionPreference.addEventListener('change',()=>{if(motionPreference.matches){sparks.forEach(s=>s.remove());sparks.clear()}});
- }
  const featured=projects.slice(0,5);
  featured.forEach((p,i)=>{
   const button=document.createElement('button');button.textContent=String(i+1).padStart(2,'0');button.setAttribute('aria-label',`Feature ${p.title}`);button.setAttribute('aria-pressed',i===0);
@@ -62,7 +47,7 @@
   render(p);history.replaceState(null,'',`#project/${slug}`);$('#close-dialog').focus();
   if(origin&&!motionPreference.matches){
    const target=$('.detail-cover'),dest=target.getBoundingClientRect();
-   if(dest.top<innerHeight){
+   if(dest.top<innerHeight && typeof source.animate==='function'){
     const clone=source.cloneNode();clone.removeAttribute('loading');clone.alt='';clone.setAttribute('aria-hidden','true');
     clone.className='project-transition';Object.assign(clone.style,{left:origin.left+'px',top:origin.top+'px',width:origin.width+'px',height:origin.height+'px'});
     dialog.append(clone);target.style.opacity='0';
@@ -98,7 +83,7 @@
   intro.inert=false;intro.classList.remove('dismissed');
   // Restart title animations without changing the visitor's scroll position.
   intro.querySelectorAll('span,i').forEach(element=>{element.style.animation='none';void element.offsetWidth;element.style.animation=''});
-  $('#skip-intro').focus();introTimer=setTimeout(()=>{dismiss();$('#replay-intro').focus()},4600);
+  $('#skip-intro').focus();introTimer=setTimeout(()=>{dismiss();$('#replay-intro').focus()},2400);
  };
  const navLinks=[...document.querySelectorAll('nav a')];
  function updateNavigation(){
