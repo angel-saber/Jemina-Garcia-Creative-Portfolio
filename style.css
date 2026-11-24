@@ -98,3 +98,20 @@ footer h2{line-height:1.12;color:var(--accent)}
 @media(min-width:761px) and (max-width:1050px){.hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.hero-controls{width:100%;justify-content:flex-end}}
 @media(max-width:760px){header{height:auto;min-height:76px;gap:8px;padding-block:12px}.hero{display:block}.hero-top{margin-bottom:28px}.hero h1{font-size:clamp(48px,11vw,82px);margin-bottom:26px}.hero-cinema{height:clamp(290px,75vw,420px)}.hero-bottom{padding-bottom:48px}.gallery{grid-template-columns:1fr;gap:40px}.project-card:nth-child(even){margin-top:0}.current-grid{gap:28px}.hero-caption>button{max-width:100%}}
 @media(prefers-reduced-motion:no-preference){.scroll-reveal{transform:translateY(12px);transition:opacity .65s ease,transform .65s ease}.scroll-reveal.is-revealed{transform:none}}
+
+/* Dimensional film exhibition: real CSS perspective, with flat accessible fallback. */
+.hero{perspective:1500px}
+.hero-cinema{transform:rotateY(-7deg) rotateX(2deg);transform-origin:center;transition:transform .7s cubic-bezier(.2,.75,.25,1),box-shadow .7s;box-shadow:18px 24px 45px #0008}
+.gallery{perspective:1800px}
+.project-open{perspective:1100px}
+.project-open .image-wrap{transform:rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transform-origin:center;transition:transform .45s cubic-bezier(.2,.75,.25,1),box-shadow .45s;box-shadow:0 10px 24px #0003}
+.filmstrip{perspective:1000px;padding-block:30px}
+.filmstrip button{transform:rotateY(-9deg);transition:transform .4s,opacity .4s;opacity:.85}
+.vp-image{transform:perspective(1200px) rotateY(-6deg);transition:transform .6s;box-shadow:15px 20px 35px #0006}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+.hero-cinema:hover,.hero-cinema:focus-within{transform:rotateY(0) rotateX(0) translateZ(12px)}
+.project-open:hover .image-wrap{box-shadow:0 24px 40px #0008}
+.filmstrip button:hover,.filmstrip button:focus-visible{transform:rotateY(0) translateZ(20px);opacity:1}
+.vp-image:hover,.vp-image:focus-visible{transform:perspective(1200px) rotateY(0) translateZ(12px)}
+}
+@media(max-width:760px),(hover:none),(prefers-reduced-motion:reduce){.hero-cinema,.project-open .image-wrap,.filmstrip button,.vp-image{transform:none;box-shadow:none}.filmstrip button{opacity:1}}
