@@ -35,6 +35,19 @@
   $('#gallery').append(b);
   const frame=document.createElement('button');frame.innerHTML=`<img src="${image(p,p.cover)}" alt="" loading="lazy"><span>${esc(p.title)}</span>`;frame.onclick=()=>openProject(p.slug,frame.querySelector('img'));$('#filmstrip').append(frame);
  });
+ // Pointer-driven perspective on film stills; no animation loop or touch interception.
+ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.project-open').forEach(card=>{
+   let frame=0,point=null;
+   const reset=()=>{if(frame)cancelAnimationFrame(frame);frame=0;point=null;card.style.removeProperty('--tilt-x');card.style.removeProperty('--tilt-y')};
+   card.addEventListener('pointermove',e=>{
+    if(motionPreference.matches||e.pointerType==='touch')return;
+    point={x:e.clientX,y:e.clientY};
+    if(!frame)frame=requestAnimationFrame(()=>{frame=0;if(!point)return;const r=card.getBoundingClientRect();const x=Math.max(-.5,Math.min(.5,(point.x-r.left)/r.width-.5));const y=Math.max(-.5,Math.min(.5,(point.y-r.top)/r.height-.5));card.style.setProperty('--tilt-x',(-y*12)+'deg');card.style.setProperty('--tilt-y',(x*14)+'deg')});
+   },{passive:true});
+   card.addEventListener('pointerleave',reset);card.addEventListener('blur',reset);motionPreference.addEventListener('change',reset);
+  });
+ }
  function render(p){
   $('#project-content').innerHTML=`<article class="project-detail"><span class="eyebrow">${esc(p.format)}</span><h2 id="project-title">${esc(p.title)}</h2><span class="credit">${esc(p.credit)}</span><p class="logline">${esc(p.logline)}</p><div class="watch-actions">${p.request?`<a href="mailto:jemina.b.garcia@gmail.com?subject=${encodeURIComponent("Screening request: "+p.title)}">Request screening</a>`:`<button id="play-film">Watch film</button>`}${p.link?`<a href="${p.link}" target="_blank" rel="noopener">Open film in new tab</a>`:''}</div><img class="detail-cover" src="${image(p,p.cover)}" alt="Film still from ${esc(p.title)}"><div class="player" id="player"></div><div class="detail-sections"><article><h3>THE IDEA</h3><p>${esc(p.idea)}</p></article><article><h3>THE APPROACH</h3><p>${esc(p.approach)}</p></article><article><h3>MY ROLE</h3><p>${esc(p.role)}</p></article></div><div class="detail-stills">${p.images.filter(i=>i!==p.cover).map(i=>`<img src="${image(p,i)}" alt="Additional still from ${esc(p.title)}" loading="lazy">`).join('')}</div><div class="detail-next"><button id="previous-project">Previous project</button><button id="next-project">Next project</button></div></article>`;
   if($('#play-film')) $('#play-film').onclick=()=>{const player=$('#player');player.innerHTML=p.local?`<video controls playsinline preload="metadata" poster="${image(p,p.cover)}" aria-label="${esc(p.title)} film"><source src="${p.local}" type="video/mp4">Your browser cannot play this video. <a href="${p.local}">Download the film</a>.</video>`:`<iframe src="${p.embed}" title="Watch ${esc(p.title)}" allow="fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe><p>If playback is unavailable or requires access, use “Open film in new tab” above.</p>`;$('#play-film').disabled=true;$('#play-film').textContent='Film player opened';player.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'center'})};
