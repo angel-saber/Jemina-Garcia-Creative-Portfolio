@@ -101,7 +101,7 @@
  const navLinks=[...document.querySelectorAll('nav a')];
  function updateNavigation(){
   let active='#home';const offset=document.querySelector('header').offsetHeight+80;
-  for(const id of ['home','work','about','contact']){if(document.getElementById(id).getBoundingClientRect().top<=offset)active='#'+id}
+  for(const id of ['home','work','cinematheque','about','contact']){if(document.getElementById(id).getBoundingClientRect().top<=offset)active='#'+id}
   navLinks.forEach(link=>{if(link.getAttribute('href')===active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current')});
  }
  let navigationFrame=false;
